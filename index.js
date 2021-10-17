@@ -5,7 +5,7 @@ const port = 3000
 
 app.use(morgan('combined'))
 
-app.get('/', (req, res) => {
+app.get('/trang-chu', (req, res) => {
   res.send('Hello World!')
 })
 
