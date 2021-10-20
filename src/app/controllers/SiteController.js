@@ -1,7 +1,15 @@
+// Import models Post
+const Post = require('../models/post');
 class SiteController {
     // [GET] /
     home(req, res) {
-        res.render('home');
+        Post.find({}, (err, post) => {
+            if (!err) {
+                res.json(post);
+            } else {
+                res.status(404).json({ error: 'ERROR!!!' });
+            }
+        });
     }
 
     // [POST] /
