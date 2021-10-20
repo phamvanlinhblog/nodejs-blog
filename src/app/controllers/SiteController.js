@@ -1,15 +1,22 @@
 // Import models Post
 const Post = require('../models/post');
+const { multipleMongooseToObject } = require('../../util/mongoose');
 class SiteController {
     // [GET] /
-    home(req, res) {
-        Post.find({}, (err, post) => {
-            if (!err) {
-                res.json(post);
-            } else {
-                res.status(404).json({ error: 'ERROR!!!' });
-            }
-        });
+    home(req, res, next) {
+        Post.find({})
+            /**
+             * Post.find({}, function(error, posts) {
+             *     res.json('posts')
+             * })
+             *  Trả về Object posts để render vào trang home
+             * */
+            .then((posts) => {
+                res.render('home', {
+                    posts: multipleMongooseToObject(posts),
+                });
+            })
+            .catch(next);
     }
 
     // [POST] /
