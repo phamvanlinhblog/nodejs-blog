@@ -55,6 +55,13 @@ class PostsController {
             .then(() => res.redirect('list'))
             .catch(next);
     }
+
+    // [DELETE] /posts/:id/delete
+    delete(req, res, next) {
+        Post.deleteOne({ _id: req.params.id })
+            .then(() => res.redirect('back'))
+            .catch(next);
+    }
 }
 
 module.exports = new PostsController();

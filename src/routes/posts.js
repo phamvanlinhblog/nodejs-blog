@@ -8,6 +8,7 @@ route.get('/list', postsController.list);
 route.post('/store', postsController.store);
 route.get('/:id/update', postsController.update);
 route.put('/:id', postsController.putUpdate);
+route.delete('/:id', postsController.delete);
 route.get('/:slug', postsController.show);
 
 module.exports = route;

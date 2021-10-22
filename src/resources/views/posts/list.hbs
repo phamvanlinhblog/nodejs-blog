@@ -13,12 +13,51 @@
             {{#each posts}}
                 <tr>
                     <th scope="row">{{sum @index 1}}</th>
-                    <td>{{this.name}}</td>
+                    <td> <a href="/posts/{{this.slug}}">{{this.name}}</a></td>
                     <td>{{this.createdAt}}</td>
                     <td><a href="/posts/{{this._id}}/update">Sửa</a></td>
-                    <td><a href="/posts/{{this._id}}/delete">Xóa</a></td>
+                    <td><a href="" data-toggle="modal" data-id="{{this._id}}" data-target="#delete-post-modal">Xóa</a></td>
                 </tr>
             {{/each}}
         </tbody>
     </table>
 </div>
+<!-- Cảnh báo xóa post -->
+<div class="modal fade" id="delete-post-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Xóa bài đăng ?</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        Bạn chắc chắn muốn xóa bài viết ?
+      </div>
+      <div class="modal-footer">
+        <form type="submit" name="delete-post-form" method="POST">
+            <button type="button" id="btn-delete-post" class="btn btn-danger">Xóa</button>
+        </form>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var postId; // lấy id của p
+        var deleteForm = document.forms['delete-post-form'];
+        var btnDeletePost = document.getElementById('btn-delete-post');
+
+        $('#delete-post-modal').on('show.bs.modal', function(event) {
+            var button = $(event.relatedTarget);
+            postId = button.data('id');
+        });
+
+        btnDeletePost.onclick = function() {
+            deleteForm.action = '/posts/' + postId + '?_method=DELETE';
+        }
+    })
+</script>
