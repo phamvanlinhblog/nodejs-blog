@@ -56,9 +56,34 @@ class PostsController {
             .catch(next);
     }
 
-    // [DELETE] /posts/:id/delete
-    delete(req, res, next) {
+    // [DELETE] /posts/:id
+    destroy(req, res, next) {
+        Post.delete({ _id: req.params.id })
+            .then(() => res.redirect('back'))
+            .catch(next);
+    }
+
+    // [GET] /posts/edit
+    trash(req, res, next) {
+        Post.findDeleted({})
+            .then((posts) => {
+                res.render('posts/trash', {
+                    posts: multipleMongooseToObject(posts),
+                });
+            })
+            .catch(next);
+    }
+
+    // [DELETE] /posts/:id/force
+    forceDestroy(req, res, next) {
         Post.deleteOne({ _id: req.params.id })
+            .then(() => res.redirect('back'))
+            .catch(next);
+    }
+
+    // [PATCH] /posts/:id/restore
+    restore(req, res, next) {
+        Post.restore({ _id: req.params.id })
             .then(() => res.redirect('back'))
             .catch(next);
     }

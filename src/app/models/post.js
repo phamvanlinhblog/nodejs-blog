@@ -1,8 +1,9 @@
 // Import mongoose, schema interface
 const mongoose = require('mongoose');
-const Schema = mongoose.Schema;
 const slug = require('mongoose-slug-generator');
-mongoose.plugin(slug);
+const mongooseDelete = require('mongoose-delete');
+
+const Schema = mongoose.Schema;
 
 // Model BlogPost are defined through the Schema interface.
 const BlogPost = new Schema(
@@ -16,6 +17,13 @@ const BlogPost = new Schema(
         timestamps: true,
     },
 );
+
+// Add plugin
+mongoose.plugin(slug);
+BlogPost.plugin(mongooseDelete, {
+    deletedAt: true,
+    overrideMethods: 'all',
+});
 
 // Export model BlogPost from localhost:27017/vanlinh_blog_dev.posts
 module.exports = mongoose.model('posts', BlogPost);

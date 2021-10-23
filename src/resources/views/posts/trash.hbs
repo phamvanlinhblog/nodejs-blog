@@ -1,32 +1,32 @@
 <div class="mt-4">
     <div class="list-title">
-        <h3>Danh sách bài đăng</h3>
-        <a href="/posts/trash"><i class="fas fa-trash-alt"></i> Thùng rác</a>
+        <h3>Thùng rác</h3>
+        <a href="/posts/list">Danh sách bài đăng <i class="fas fa-arrow-right"></i></a>
     </div>
     <table class="table">
         <thead>
             <tr>
-                <th scope="col">#</th>
-                <th scope="col">Tên</th>
-                <th scope="col">Ngày tạo</th>
-                <th scope="col"></th>
+              <th scope="col">#</th>
+              <th scope="col">Tên</th>
+              <th scope="col">Ngày xóa</th>
+              <th scope="col"></th>
             </tr>
         </thead>
         <tbody>
             {{#each posts}}
                 <tr>
                     <th scope="row">{{sum @index 1}}</th>
-                    <td><a href="/posts/{{this.slug}}">{{this.name}}</a></td>
-                    <td>{{this.createdAt}}</td>
+                    <td>{{this.name}}</a></td>
+                    <td>{{this.deletedAt}}</td>
                     <td>
-                      <a href="/posts/{{this._id}}/update"><i class="fas fa-edit"></i></a>&emsp;
-                      <a href="" data-toggle="modal" data-id="{{this._id}}" data-target="#delete-post-modal"><i class="fas fa-trash"></i></a>
+                      <a href="" class="btn-restore" data-toggle="modal" data-id="{{this._id}}" data-target="#restore-post-modal">Khôi phục</a>&emsp;
+                      <a href="" data-toggle="modal" data-id="{{this._id}}" data-target="#delete-post-modal">Xóa vĩnh viễn</a>
                     </td>
-                </tr>
+                </tr>   
             {{else}}
                 <tr>
                   <td colspan="4" class="text-center">
-                    Không có bài đăng nào!<a href="/posts/create"> Đăng bài mới</a>
+                    Thùng rác trống
                   </td>
                 </tr>
             {{/each}}
@@ -38,13 +38,13 @@
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Xóa bài đăng ?</h5>
+        <h5 class="modal-title" id="exampleModalLabel">Xóa vĩnh viễn?</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
       <div class="modal-body">
-        Bạn chắc chắn muốn xóa bài viết ?
+        Bạn chắc chắn muốn xóa bài viết vĩnh viễn?
       </div>
       <div class="modal-footer"> 
         <button type="button" id="btn-delete-post" class="btn btn-danger">Xóa</button>
@@ -53,13 +53,16 @@
     </div>
   </div>
 </div>
-<form type="submit" name="delete-post-form" method="POST"></form>
+<form type="submit" name="delete-post-form" method="POST"></form> 
+<form type="submit" name="restore-post-form" method="POST"></form>
 <!-- script set action cho form -->
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         var postId; // lấy id của post
-        var deleteForm = document.forms['delete-post-form']; // Lấy form
-        var btnDeletePost = document.getElementById('btn-delete-post'); // Lấy element button xóa
+        var deleteForm = document.forms['delete-post-form']; // Lấy form delete
+        var restoreForm = document.forms['restore-post-form']; // Lấy form restore
+        var btnDeletePost = document.getElementById('btn-delete-post'); // Lấy button xóa
+        var btnRestorePost = $('.btn-restore'); // Lấy button restore
 
         // lấy data-id
         $('#delete-post-modal').on('show.bs.modal', function(event) {
@@ -68,8 +71,15 @@
         });
 
         btnDeletePost.onclick = function() {
-            deleteForm.action = '/posts/' + postId + '?_method=DELETE';
+            deleteForm.action = '/posts/' + postId + '/force?_method=DELETE';
             deleteForm.submit();
         }
+
+        // Set action click cho nút khôi phục
+        btnRestorePost.click(function(e) {
+            postId = ($(this).data('id'));
+            restoreForm.action = '/posts/' + postId + '/restore?_method=PATCH';
+            restoreForm.submit();
+        }) 
     })
 </script>
