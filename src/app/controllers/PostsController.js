@@ -31,10 +31,11 @@ class PostsController {
 
     // [GET] /posts/edit
     list(req, res, next) {
-        Post.find({})
-            .then((posts) => {
+        Promise.all([Post.find({}), Post.countDocumentsDeleted()])
+            .then(([posts, deletedCount]) => {
                 res.render('posts/list', {
                     posts: multipleMongooseToObject(posts),
+                    deletedCount,
                 });
             })
             .catch(next);
