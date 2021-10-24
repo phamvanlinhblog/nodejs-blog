@@ -1,11 +1,21 @@
-<div class="mt-4">
-    <div class="list-title">
+<form class="mt-4" name="container-form" method="POST" action="/posts/handle-form-actions">
+    <div class="mb-3 d-flex align-items-center justify-content-between">
         <h3>Danh sách bài đăng</h3>
         <a href="/posts/trash"><i class="fas fa-trash-alt"></i> Thùng rác ({{deletedCount}})</a>
+    </div>
+    <div class="mb-3 d-flex align-items-center">
+      <div class="form-check">
+        <input class="form-check-input" type="checkbox" value="" id="checkbox-all">
+        <label class="form-check-label" for="checkbox-all">
+          Chọn tất cả
+        </label>
+      </div>
+      <button class="btn btn-danger btn-sm delete-all-btn" name="action" value="delete" disabled><i class="fas fa-trash"></i></button>
     </div>
     <table class="table">
         <thead>
             <tr>
+                <th scope="col"></th>
                 <th scope="col">#</th>
                 <th scope="col">Tên</th>
                 <th scope="col">Ngày tạo</th>
@@ -15,7 +25,14 @@
         <tbody>
             {{#each posts}}
                 <tr>
-                    <th scope="row">{{sum @index 1}}</th>
+                    <th>
+                      <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="postIds[]" value="{{this._id}}" id="checkbox-item">
+                      </div>
+                    </th>
+                    <th scope="row">
+                      {{sum @index 1}}
+                    </th>
                     <td><a href="/posts/{{this.slug}}">{{this.name}}</a></td>
                     <td>{{this.createdAt}}</td>
                     <td>
@@ -32,9 +49,9 @@
             {{/each}}
         </tbody>
     </table>
-</div>
+</form>
 <!-- Cảnh báo xóa post -->
-<div class="modal fade" id="delete-post-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade" id="delete-post-modal" tabindex="-1" role="dialog" aria-hidden="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
@@ -58,8 +75,11 @@
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         var postId; // lấy id của post
-        var deleteForm = document.forms['delete-post-form']; // Lấy form
+        var deleteForm = document.forms['delete-post-form']; // Lấy form delete
         var btnDeletePost = document.getElementById('btn-delete-post'); // Lấy element button xóa
+        var checkboxAll = $('#checkbox-all'); // Lấy element check tất cả
+        var checkboxItems = $('input[name="postIds[]"]'); // Lấy element items
+        var btnDeleteAll = $('.delete-all-btn'); // Lấy button xóa tất cả
 
         // lấy data-id
         $('#delete-post-modal').on('show.bs.modal', function(event) {
@@ -67,9 +87,33 @@
             postId = button.data('id');
         });
 
+        // Xóa từng bài
         btnDeletePost.onclick = function() {
             deleteForm.action = '/posts/' + postId + '?_method=DELETE';
             deleteForm.submit();
+        }
+        
+        // Checkbox all 
+        checkboxAll.change(function() {
+            var isCheckedAll = $(this).prop('checked');
+            checkboxItems.prop('checked', isCheckedAll);
+            renderDeleteAllButton();
+        })
+
+        checkboxItems.change(function() {
+            var isCheckedAll = checkboxItems.length === $('input[name="postIds[]"]:checked').length;
+            checkboxAll.prop('checked', isCheckedAll);
+            renderDeleteAllButton();
+        })
+
+        // Render lại nút xóa tất cả
+        function renderDeleteAllButton() {
+            var checkedCount = $('input[name="postIds[]"]:checked').length;
+            if (checkedCount > 0) {
+                btnDeleteAll.attr('disabled', false);
+            } else {
+                btnDeleteAll.attr('disabled', true);
+            }
         }
     })
 </script>

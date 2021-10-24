@@ -10,6 +10,7 @@ router.get('/trash', postsController.trash);
 router.get('/:id/update', postsController.update);
 router.patch('/:id/restore', postsController.restore);
 router.delete('/:id/force', postsController.forceDestroy);
+router.post('/handle-form-actions', postsController.handleFormActions);
 router.put('/:id', postsController.putUpdate);
 router.delete('/:id', postsController.destroy);
 router.get('/:slug', postsController.show);

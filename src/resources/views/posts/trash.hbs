@@ -1,11 +1,22 @@
-<div class="mt-4">
-    <div class="list-title">
+<form class="mt-4" method="POST" action="/posts/handle-form-actions">
+    <div class="d-flex align-items-center justify-content-between">
         <h3>Thùng rác</h3>
         <a href="/posts/list">Danh sách bài đăng <i class="fas fa-arrow-right"></i></a>
+    </div>
+    <div class="mb-3 d-flex align-items-center">
+      <div class="form-check">
+        <input class="form-check-input" type="checkbox" value="" id="checkbox-all">
+        <label class="form-check-label" for="checkbox-all">
+          Chọn tất cả
+        </label>
+      </div>
+      <button class="btn btn-primary btn-sm restore-all-btn" name="action" value="restore" disabled><i class="fas fa-undo"></i></button>
+      <button class="btn btn-danger btn-sm delete-all-btn" name="action" value="force-delete" disabled><i class="fas fa-trash"></i></button>
     </div>
     <table class="table">
         <thead>
             <tr>
+              <th scope="col"></th>
               <th scope="col">#</th>
               <th scope="col">Tên</th>
               <th scope="col">Ngày xóa</th>
@@ -15,12 +26,17 @@
         <tbody>
             {{#each posts}}
                 <tr>
+                    <th>
+                      <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="postIds[]" value="{{this._id}}" id="checkbox-item">
+                      </div>                      
+                    </th>
                     <th scope="row">{{sum @index 1}}</th>
                     <td>{{this.name}}</a></td>
                     <td>{{this.deletedAt}}</td>
                     <td>
-                      <a href="" class="btn-restore" data-toggle="modal" data-id="{{this._id}}" data-target="#restore-post-modal">Khôi phục</a>&emsp;
-                      <a href="" data-toggle="modal" data-id="{{this._id}}" data-target="#delete-post-modal">Xóa vĩnh viễn</a>
+                      <a href="" class="btn-restore" data-toggle="modal" data-id="{{this._id}}" data-target="#restore-post-modal"><i class="fas fa-undo"></i></a>&emsp;
+                      <a href="" data-toggle="modal" data-id="{{this._id}}" data-target="#delete-post-modal"><i class="fas fa-trash"></i></a>
                     </td>
                 </tr>   
             {{else}}
@@ -32,19 +48,19 @@
             {{/each}}
         </tbody>
     </table>
-</div>
+</form>
 <!-- Cảnh báo xóa post -->
-<div class="modal fade" id="delete-post-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade" id="delete-post-modal" tabindex="-1" role="dialog" aria-hidden="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Xóa vĩnh viễn?</h5>
+        <h5 class="modal-title" id="exampleModalLabel">Xóa bài vĩnh viễn đăng ?</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
       <div class="modal-body">
-        Bạn chắc chắn muốn xóa bài viết vĩnh viễn?
+        Bạn chắc chắn muốn xóa vĩnh viễn bài viết ?
       </div>
       <div class="modal-footer"> 
         <button type="button" id="btn-delete-post" class="btn btn-danger">Xóa</button>
@@ -53,8 +69,8 @@
     </div>
   </div>
 </div>
-<form type="submit" name="delete-post-form" method="POST"></form> 
-<form type="submit" name="restore-post-form" method="POST"></form>
+<form type="submit" action="" name="delete-post-form" method="POST"></form>
+<form type="submit" action="" name="restore-post-form" method="POST"></form>
 <!-- script set action cho form -->
 <script>
     document.addEventListener('DOMContentLoaded', function() {
@@ -63,13 +79,19 @@
         var restoreForm = document.forms['restore-post-form']; // Lấy form restore
         var btnDeletePost = document.getElementById('btn-delete-post'); // Lấy button xóa
         var btnRestorePost = $('.btn-restore'); // Lấy button restore
+        var checkboxAll = $('#checkbox-all'); // Lấy element check tất cả
+        var checkboxItems = $('input[name="postIds[]"]'); // Lấy element items
+        var btnDeleteAll = $('.delete-all-btn'); // Lấy button xóa tất cả
+        var btnRestoreAll = $('.restore-all-btn'); // Lấy button khôi phục tất cả
 
+        
         // lấy data-id
         $('#delete-post-modal').on('show.bs.modal', function(event) {
             var button = $(event.relatedTarget);
             postId = button.data('id');
         });
 
+        // Xóa từng bài
         btnDeletePost.onclick = function() {
             deleteForm.action = '/posts/' + postId + '/force?_method=DELETE';
             deleteForm.submit();
@@ -80,6 +102,31 @@
             postId = ($(this).data('id'));
             restoreForm.action = '/posts/' + postId + '/restore?_method=PATCH';
             restoreForm.submit();
-        }) 
+        })
+
+        // Checkbox all
+        checkboxAll.change(function() {
+            var isCheckedAll = $(this).prop('checked');
+            checkboxItems.prop('checked', isCheckedAll);
+            renderDeleteAllButton();
+        })
+
+        checkboxItems.change(function() {
+            var isCheckedAll = checkboxItems.length === $('input[name="postIds[]"]:checked').length;
+            checkboxAll.prop('checked', isCheckedAll);
+            renderDeleteAllButton();
+        })
+
+        // Render lại 2 nút
+        function renderDeleteAllButton() {
+            var checkedCount = $('input[name="postIds[]"]:checked').length;
+            if (checkedCount > 0) {
+                btnDeleteAll.attr('disabled', false);
+                btnRestoreAll.attr('disabled', false);
+            } else {
+                btnDeleteAll.attr('disabled', true);
+                btnRestoreAll.attr('disabled', true);
+            }
+        }
     })
 </script>

@@ -88,6 +88,29 @@ class PostsController {
             .then(() => res.redirect('back'))
             .catch(next);
     }
+
+    // [POST] /posts/handle-form-actions
+    handleFormActions(req, res, next) {
+        switch (req.body.action) {
+            case 'delete':
+                Post.delete({ _id: { $in: req.body.postIds } })
+                    .then(() => res.redirect('back'))
+                    .catch(next);
+                break;
+            case 'restore':
+                Post.restore({ _id: { $in: req.body.postIds } })
+                    .then(() => res.redirect('back'))
+                    .catch(next);
+                break;
+            case 'force-delete':
+                Post.deleteMany({ _id: { $in: req.body.postIds } })
+                    .then(() => res.redirect('back'))
+                    .catch(next);
+                break;
+            default:
+                res.redirect('back');
+        }
+    }
 }
 
 module.exports = new PostsController();
