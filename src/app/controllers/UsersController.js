@@ -3,7 +3,6 @@ const {
     mongooseToObject,
     multipleMongooseToObject,
 } = require('../../util/mongoose');
-
 class UsersController {
     // [GET] /users
     index(req, res, next) {
@@ -24,11 +23,26 @@ class UsersController {
     // [POST] /users/store
     store(req, res, next) {
         const user = new User(req.body);
-        user.save()
-            .then(() => res.redirect('/'))
-            .catch((error) =>
-                res.render('users/create', { err: error._message }),
-            );
+        if (res.locals.alert.type == 'primary') {
+            user.save()
+                .then(() =>
+                    res.render('users/create', {
+                        data: req.body,
+                        alert: res.locals.alert,
+                    }),
+                )
+                .catch((error) =>
+                    res.render('users/create', {
+                        err: error._message,
+                        data: req.body,
+                    }),
+                );
+        } else {
+            res.render('users/create', {
+                data: req.body,
+                alert: res.locals.alert,
+            });
+        }
     }
 }
 

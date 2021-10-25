@@ -2,12 +2,16 @@ const newsRoute = require('./news');
 const postsRoute = require('./posts');
 const siteRoute = require('./site');
 const usersRoute = require('./users');
+const authRoute = require('./auth');
+
+const authMiddleware = require('../app/middleware/AuthMiddleware');
 
 function router(app) {
-    app.use('/news', newsRoute);
-    app.use('/posts', postsRoute);
-    app.use('/users', usersRoute);
-    app.use('', siteRoute);
+    app.use('/news', authMiddleware, newsRoute);
+    app.use('/posts', authMiddleware, postsRoute);
+    app.use('/users', authMiddleware, usersRoute);
+    app.use('/auth', authRoute);
+    app.use('', authMiddleware, siteRoute);
 }
 
 module.exports = router;

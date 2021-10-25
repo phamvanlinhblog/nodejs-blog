@@ -1,0 +1,20 @@
+<div class="mt-4">
+    <h2>Đăng nhập</h2>
+    <form method="POST" action="/auth/login">
+        <div class="form-group">
+            <label>Tên tài khoản<span style="color:red">*</span></label>
+            <input type="text" name="username" class="form-control" placeholder="Tên tài khoản" value="{{data.username}}">
+        </div>
+        <div class="form-group">
+            <label>Mật khẩu<span style="color:red">*</span></label>
+            <input type="password" name="password" class="form-control" placeholder="Mật khẩu">
+        </div>
+        {{#if error}}
+            <div class="alert alert-{{error.type}}" role="alert">
+                {{error.message}}
+            </div>
+        {{/if}}
+        <button type="submit" class="btn btn-primary">Đăng nhập</button>
+        <button type="submit" class="btn btn-success">Đăng kí</button>
+    </form>
+</div>
