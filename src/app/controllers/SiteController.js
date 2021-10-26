@@ -1,5 +1,6 @@
 // Import models Post
 const Post = require('../models/post');
+const User = require('../models/user');
 const { multipleMongooseToObject } = require('../../util/mongoose');
 class SiteController {
     // [GET] /
@@ -12,7 +13,10 @@ class SiteController {
              *  Trả về Object posts để render vào trang home
              * */
             .then((posts) => {
-                res.render('home', { posts: multipleMongooseToObject(posts) });
+                res.render('home', {
+                    posts: multipleMongooseToObject(posts),
+                    name: res.locals.name,
+                });
             })
             .catch(next);
     }

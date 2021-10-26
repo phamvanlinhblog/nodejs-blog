@@ -1,3 +1,5 @@
+const md5 = require('md5');
+
 const User = require('../models/user');
 const {
     mongooseToObject,
@@ -13,7 +15,7 @@ class AuthController {
     // [POST] /auth/login
     postLogin(req, res, next) {
         var username = req.body.username;
-        var password = req.body.password;
+        var password = md5(req.body.password);
         User.findOne({ username: username })
             .then((user) => {
                 if (!user) {
@@ -34,10 +36,16 @@ class AuthController {
                     });
                     return;
                 }
-                res.cookie('userId', user.id);
-                res.redirect('/users');
+                res.cookie('userId', user.id, { signed: true });
+                res.redirect('/');
             })
             .catch(next);
+    }
+
+    // [GET] /auth/logout
+    logout(req, res, next) {
+        res.clearCookie('userId');
+        res.render('auth/login');
     }
 }
 

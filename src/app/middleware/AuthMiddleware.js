@@ -1,8 +1,8 @@
 const User = require('../models/user');
 
 module.exports = function AuthMiddleware(req, res, next) {
-    var userId = req.cookies.userId;
-
+    var userId = req.signedCookies.userId;
+    console.log(userId);
     if (!userId) {
         res.redirect('/auth/login');
         return;
@@ -12,6 +12,8 @@ module.exports = function AuthMiddleware(req, res, next) {
         if (!user) {
             res.redirect('/auth/login');
             return;
+        } else {
+            res.locals.name = user.name;
         }
     });
     next();

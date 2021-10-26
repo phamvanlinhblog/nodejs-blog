@@ -1,3 +1,5 @@
+const md5 = require('md5');
+
 const User = require('../models/user');
 const {
     mongooseToObject,
@@ -22,12 +24,14 @@ class UsersController {
 
     // [POST] /users/store
     store(req, res, next) {
-        const user = new User(req.body);
+        var data = req.body;
+        data.password = md5(data.password);
+        console.log(data);
+        const user = new User(data);
         if (res.locals.alert.type == 'primary') {
             user.save()
                 .then(() =>
                     res.render('users/create', {
-                        data: req.body,
                         alert: res.locals.alert,
                     }),
                 )

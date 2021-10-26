@@ -9,7 +9,7 @@ const authMiddleware = require('../app/middleware/AuthMiddleware');
 function router(app) {
     app.use('/news', authMiddleware, newsRoute);
     app.use('/posts', authMiddleware, postsRoute);
-    app.use('/users', authMiddleware, usersRoute);
+    app.use('/users', usersRoute);
     app.use('/auth', authRoute);
     app.use('', authMiddleware, siteRoute);
 }
