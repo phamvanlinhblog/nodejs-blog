@@ -1,4 +1,5 @@
 const md5 = require('md5');
+const jwt = require('jsonwebtoken');
 
 const User = require('../models/user');
 const {
@@ -16,6 +17,12 @@ class AuthController {
     postLogin(req, res, next) {
         var username = req.body.username;
         var password = md5(req.body.password);
+        if (!username) {
+            res.render('auth/login', {
+                error: { message: 'Bạn chưa nhập tài khoản', type: 'danger' },
+            });
+            return;
+        }
         User.findOne({ username: username })
             .then((user) => {
                 if (!user) {
@@ -36,7 +43,11 @@ class AuthController {
                     });
                     return;
                 }
-                res.cookie('userId', user.id, { signed: true });
+                var token = jwt.sign(
+                    { _id: user._id, username: user.username },
+                    process.env.JWT_KEY,
+                );
+                res.cookie('userCookie', token, { signed: true });
                 res.redirect('/');
             })
             .catch(next);
@@ -44,7 +55,7 @@ class AuthController {
 
     // [GET] /auth/logout
     logout(req, res, next) {
-        res.clearCookie('userId');
+        res.clearCookie('userCookie');
         res.render('auth/login');
     }
 }

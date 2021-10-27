@@ -4,7 +4,7 @@ const mongoose = require('mongoose');
 async function connect() {
     try {
         // connect database
-        await mongoose.connect('mongodb://localhost:27017/vanlinh_blog_dev');
+        await mongoose.connect(process.env.MONGODB_CONNECTION);
         console.log('Connect successfully');
     } catch (error) {
         console.log('Connect fail:' + error);

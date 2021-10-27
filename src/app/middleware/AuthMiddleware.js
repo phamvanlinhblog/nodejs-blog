@@ -1,14 +1,15 @@
 const User = require('../models/user');
+const jwt = require('jsonwebtoken');
 
 module.exports = function AuthMiddleware(req, res, next) {
-    var userId = req.signedCookies.userId;
-    console.log(userId);
-    if (!userId) {
+    var userCookie = req.signedCookies.userCookie;
+    var data = jwt.verify(userCookie, process.env.JWT_KEY);
+    if (!userCookie) {
         res.redirect('/auth/login');
         return;
     }
 
-    User.findOne({ _id: userId }, function (err, user) {
+    User.findOne({ _id: data._id }, function (err, user) {
         if (!user) {
             res.redirect('/auth/login');
             return;

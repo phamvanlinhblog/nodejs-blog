@@ -1,3 +1,4 @@
+require('dotenv').config();
 const path = require('path');
 const express = require('express');
 const morgan = require('morgan');
@@ -16,7 +17,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(methodOverride('_method'));
-app.use(cookieParser('ahjsdabnmdawds12  '));
+app.use(cookieParser('process.env.SESSION_SECRET'));
 
 // HTTP logger
 app.use(morgan('combined'));
