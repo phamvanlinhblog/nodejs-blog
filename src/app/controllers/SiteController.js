@@ -6,16 +6,10 @@ class SiteController {
     // [GET] /
     home(req, res, next) {
         Post.find({})
-            /**
-             * Post.find({}, function(error, posts) {
-             *     res.json('posts')
-             * })
-             *  Trả về Object posts để render vào trang home
-             * */
             .then((posts) => {
                 res.render('home', {
                     posts: multipleMongooseToObject(posts),
-                    name: res.locals.name,
+                    name: res.locals.user.name,
                 });
             })
             .catch(next);

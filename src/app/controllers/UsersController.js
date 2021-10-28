@@ -26,8 +26,8 @@ class UsersController {
     store(req, res, next) {
         var data = req.body;
         data.password = md5(data.password);
-        console.log(data);
         const user = new User(data);
+        user.role = 'user';
         if (res.locals.alert.type == 'primary') {
             user.save()
                 .then(() =>
@@ -47,6 +47,14 @@ class UsersController {
                 alert: res.locals.alert,
             });
         }
+    }
+
+    // [GET] /users/me
+    me(req, res, next) {
+        res.render('users/me', {
+            user: mongooseToObject(res.locals.user),
+            name: res.locals.user.name,
+        });
     }
 }
 

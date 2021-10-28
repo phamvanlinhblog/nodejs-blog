@@ -1,3 +1,4 @@
+const User = require('../models/user');
 class NewsController {
     // [GET] /news
     index(req, res) {

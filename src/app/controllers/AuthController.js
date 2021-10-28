@@ -10,7 +10,7 @@ const {
 class AuthController {
     // [GET] /auth/login
     login(req, res, next) {
-        res.render('auth/login');
+        res.render('auth/login', { layout: 'auth' });
     }
 
     // [POST] /auth/login
@@ -43,10 +43,7 @@ class AuthController {
                     });
                     return;
                 }
-                var token = jwt.sign(
-                    { _id: user._id, username: user.username },
-                    process.env.JWT_KEY,
-                );
+                var token = jwt.sign({ _id: user._id }, process.env.JWT_KEY);
                 res.cookie('userCookie', token, { signed: true });
                 res.redirect('/');
             })
@@ -56,7 +53,7 @@ class AuthController {
     // [GET] /auth/logout
     logout(req, res, next) {
         res.clearCookie('userCookie');
-        res.render('auth/login');
+        res.redirect('/auth/login');
     }
 }
 
