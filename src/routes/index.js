@@ -3,6 +3,7 @@ const postsRoute = require('./posts');
 const siteRoute = require('./site');
 const usersRoute = require('./users');
 const authRoute = require('./auth');
+const meRoute = require('./me');
 
 const authMiddleware = require('../app/middleware/AuthMiddleware');
 
@@ -11,6 +12,7 @@ function router(app) {
     app.use('/posts', authMiddleware, postsRoute);
     app.use('/users', usersRoute);
     app.use('/auth', authRoute);
+    app.use('/me', meRoute);
     app.use('', authMiddleware, siteRoute);
 }
 

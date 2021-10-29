@@ -3,10 +3,14 @@ const {
     mongooseToObject,
     multipleMongooseToObject,
 } = require('../../util/mongoose');
+const jwt = require('jsonwebtoken');
+
 class PostsController {
     // [GET] /posts/create
     create(req, res, next) {
-        res.render('posts/create');
+        var userCookie = req.signedCookies.userCookie;
+        var userId = jwt.verify(userCookie, process.env.JWT_KEY);
+        res.render('posts/create', { authorId: userId._id });
     }
 
     // [POST] /posts/store
@@ -16,7 +20,7 @@ class PostsController {
         // Save vào DB
         post.save()
             // save xong thì chuyển hướng
-            .then(() => res.redirect('list'))
+            .then(() => res.redirect('/'))
             .catch((error) => {});
     }
 

@@ -12,6 +12,7 @@ const BlogPost = new Schema(
         description: { type: String, required: true },
         thumbnail: { type: String, required: true },
         slug: { type: String, slug: 'name', unique: true },
+        author: { type: String, required: true },
     },
     {
         timestamps: true,
